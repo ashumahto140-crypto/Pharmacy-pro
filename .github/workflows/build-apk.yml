@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+
       - name: Checkout source
         uses: actions/checkout@v4
 
@@ -39,8 +40,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
 
+      # First run initializes the Android SDK.
+      # It may stop because Android licenses have not
+      # been accepted yet. That is expected.
+      - name: Initialize Android SDK
+        run: |
+          buildozer android debug || true
+
+      - name: Accept Android SDK licenses
+        run: |
+          SDKMANAGER=$(find "$HOME/.buildozer" -type f -name sdkmanager | head -n 1)
+
+          if [ -z "$SDKMANAGER" ]; then
+            echo "sdkmanager was not found"
+            exit 1
+          fi
+
+          echo "Using sdkmanager: $SDKMANAGER"
+
+          yes | "$SDKMANAGER" --licenses || true
+
+          "$SDKMANAGER" \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;37.0.0"
+
       - name: Build APK
         run: |
+          buildozer android clean
           buildozer -v android debug
 
       - name: Upload APK
