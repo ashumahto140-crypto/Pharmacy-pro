@@ -9,7 +9,7 @@ source.include_exts = py,kv,png,jpg,jpeg,atlas,db,pdf
 
 version = 1.0
 
-requirements = python3,kivy,reportlab
+requirements = python3,kivy
 
 orientation = portrait
 
@@ -22,6 +22,8 @@ android.archs = arm64-v8a, armeabi-v7a
 
 android.allow_backup = True
 android.accept_sdk_license = True
+
+p4a.branch = develop
 
 
 [buildozer]
